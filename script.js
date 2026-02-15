@@ -5,7 +5,7 @@ function typeText() {
   if (i < text.length) {
     document.getElementById("typingText").innerHTML += text.charAt(i);
     i++;
-    setTimeout(typeText, 100);
+    setTimeout(typeText, 80);
   }
 }
 window.onload = () => {
@@ -42,9 +42,9 @@ class Particle {
     this.speedY = Math.random() * 2 - 1;
     this.color = "#00ffff";
   }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
+  update(multiplier=1) {
+    this.x += this.speedX * multiplier;
+    this.y += this.speedY * multiplier;
     if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
     if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
   }
@@ -65,11 +65,67 @@ function initParticles() {
   }
 }
 
+let lastScrollY = 0;
 function animateParticles() {
+  const scrollSpeed = Math.abs(window.scrollY - lastScrollY) * 0.05 + 1;
+  lastScrollY = window.scrollY;
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   particles.forEach(p => {
-    p.update();
+    p.update(scrollSpeed);
     p.draw();
   });
   requestAnimationFrame(animateParticles);
 }
+
+// ===== Mobile Gyroscope / Tilt =====
+if (window.DeviceOrientationEvent) {
+  window.addEventListener("deviceorientation", function(event) {
+    const gamma = event.gamma || 0; // left-right tilt
+    const beta = event.beta || 0;   // front-back tilt
+    particles.forEach(p => {
+      p.x += gamma * 0.05;
+      p.y += beta * 0.05;
+    });
+  }, true);
+}
+
+// ===== Touch particle trail =====
+document.addEventListener('touchmove', e => {
+  for (let t of e.touches) {
+    const particle = new Particle();
+    particle.x = t.clientX;
+    particle.y = t.clientY;
+    particle.size = Math.random()*5+1;
+    particle.speedX = Math.random()*2-1;
+    particle.speedY = Math.random()*2-1;
+    particles.push(particle);
+    if (particles.length>300) particles.shift();
+  }
+});
+
+// ===== Card tilt on mobile swipe =====
+const cards = document.querySelectorAll('.card');
+let activeCard = null;
+let startX, startY;
+
+cards.forEach(card => {
+  card.addEventListener('touchstart', e => {
+    activeCard = card;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  });
+  card.addEventListener('touchmove', e => {
+    if(!activeCard) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    activeCard.style.transform = `rotateX(${-dy*0.3}deg) rotateY(${dx*0.3}deg) translateZ(0)`;
+  });
+  card.addEventListener('touchend', e => {
+    if(!activeCard) return;
+    activeCard.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)';
+    activeCard = null;
+  });
+});
+
+
