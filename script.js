@@ -1,4 +1,4 @@
-// Typing Animation
+// ===== Typing Animation =====
 const text = "Welcome to Huzaif Edits...";
 let i = 0;
 function typeText() {
@@ -8,28 +8,38 @@ function typeText() {
     setTimeout(typeText, 100);
   }
 }
-window.onload = typeText;
+window.onload = () => {
+  typeText();
+  initParticles();
+  animateParticles();
+};
 
-// DM Integration
+// ===== DM Integration =====
 function openDM(service) {
   const message = encodeURIComponent(`Hi! I want to order: ${service}`);
-  window.open(`https://instagram.com/huzaifedits_`, "_blank");
+  window.open(`https://instagram.com/huzaifeditz`, "_blank");
 }
 
-// Background animation
+// ===== Background Particle Animation =====
 const canvas = document.getElementById("bgCanvas");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  initParticles();
+});
 
 let particles = [];
 class Particle {
   constructor() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 3 + 1;
-    this.speedX = Math.random() * 1 - 0.5;
-    this.speedY = Math.random() * 1 - 0.5;
+    this.size = Math.random() * 4 + 1;
+    this.speedX = Math.random() * 2 - 1;
+    this.speedY = Math.random() * 2 - 1;
     this.color = "#00ffff";
   }
   update() {
@@ -42,13 +52,15 @@ class Particle {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fillStyle = this.color;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "#00ffff";
     ctx.fill();
   }
 }
 
 function initParticles() {
   particles = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 150; i++) {
     particles.push(new Particle());
   }
 }
@@ -61,6 +73,3 @@ function animateParticles() {
   });
   requestAnimationFrame(animateParticles);
 }
-
-initParticles();
-animateParticles();
