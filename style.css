@@ -5,6 +5,7 @@ body {
   background: #0f0f0f;
   color: white;
   overflow-x: hidden;
+  touch-action: pan-y;
 }
 
 canvas {
@@ -25,11 +26,6 @@ header {
   font-size: 2.5rem;
   color: #00ffff;
   animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-  from { text-shadow: 0 0 10px #0ff; }
-  to { text-shadow: 0 0 20px #0ff, 0 0 30px #0ff; }
 }
 
 .subtitle {
@@ -63,6 +59,7 @@ header {
   transition: transform 0.4s, box-shadow 0.4s, background 0.4s;
   cursor: pointer;
   animation: fadeUp 1s ease forwards;
+  perspective: 1000px;
 }
 
 .card:hover {
@@ -154,5 +151,12 @@ footer {
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(-100px);}
   to { opacity: 1; transform: translateX(0);}
+}
+
+/* ===== Mobile Scroll Effects ===== */
+@media (max-width:768px){
+  .card:hover {
+    transform: translateY(-5px);
+  }
 }
 
